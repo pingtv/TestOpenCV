@@ -1,0 +1,30 @@
+//
+//  TestOpenCV-Prefix.pch
+//  TestOpenCV
+//
+//  Created by Ping Chen on 3/14/17.
+//  Copyright © 2017 Ping Chen. All rights reserved.
+//
+
+#ifndef TestOpenCV_Prefix_pch
+#define TestOpenCV_Prefix_pch
+
+#import <Availability.h>
+
+#ifdef __cplusplus
+#import <opencv2/opencv.hpp>
+#endif
+
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
+#endif
+
+#define IS_IPAD	(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+
+#ifndef DEBUG
+#define NSLog(...) /* suppress NSLog when in release mode http://stackoverflow.com/questions/300673/is-it-true-that-one-should-not-use-nslog-on-production-code?rq=1 */
+#endif
+
+#endif /* TestOpenCV_Prefix_pch */
