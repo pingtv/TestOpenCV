@@ -7,6 +7,7 @@
 //
 
 #import "BLRTestBroadcastViewController.h"
+#import "BLRTestControlView.h"
 #import "BLRUIHelper.h"
 #import "nanostreamAVC.h"
 #import "NSXCustomCaptureSession.h"
@@ -20,10 +21,16 @@ using namespace std;
 @interface BLRTestBroadcastViewController () <UIScrollViewDelegate, CvVideoCameraDelegate>
 
 @property (strong) UIView *videoPreview;
+@property (strong) UILabel *motionMeasure;
 
 @property (nonatomic, retain) CvVideoCamera *videoCamera;
+@property (nonatomic, strong) BLRTestControlView *ctrlView;
 
 @property std::deque<cv::Mat> ring;
+
+
+@property int gaussianBlurDimension;
+@property int binaryThreshold;
 
 @end
 
@@ -38,12 +45,27 @@ using namespace std;
     
     self.videoPreview = [[UIView alloc] init];
     [self.videoPreview setTranslatesAutoresizingMaskIntoConstraints:NO];
-    
-    
     [BLRUIHelper addView:self.videoPreview toLeftRightEdgesOfSuperview:self.view withGap:0.0];
     [BLRUIHelper constrainView:self.videoPreview onTopOfSuperviewWithGap:0.0];
     [BLRUIHelper constrainView:self.videoPreview onBottomOfSuperviewWithGap:0.0];
     
+    self.motionMeasure = [[UILabel alloc] initWithFrame:CGRectMake(100, 70, 100, 60)];
+    [self.videoPreview addSubview:self.motionMeasure];
+    
+    self.gaussianBlurDimension = kBlurDimensionMin;
+    self.binaryThreshold = kThresholdMin;
+    
+    [self setupCamera];
+    [self setupControls];
+    
+    _ring.clear();
+    
+    UISwipeGestureRecognizer *swipeAway = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipedAway:)];
+    [self.view addGestureRecognizer:swipeAway];
+    
+}
+
+- (void)setupCamera {
     self.videoCamera = [[CvVideoCamera alloc] initWithParentView:self.videoPreview];
     self.videoCamera.delegate = self;
     self.videoCamera.defaultAVCaptureDevicePosition = AVCaptureDevicePositionBack;
@@ -51,12 +73,19 @@ using namespace std;
     self.videoCamera.defaultAVCaptureVideoOrientation = AVCaptureVideoOrientationLandscapeRight;
     self.videoCamera.defaultFPS = 30;
     self.videoCamera.grayscaleMode = NO;
+}
+
+- (void)setupControls {
+    _ctrlView = [[BLRTestControlView alloc] init];
+    [_ctrlView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [_ctrlView addConstraint:[NSLayoutConstraint constraintWithItem:_ctrlView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:100]];
+    [_ctrlView addConstraint:[NSLayoutConstraint constraintWithItem:_ctrlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:200]];
+    [self.videoPreview addSubview:_ctrlView];
+    [BLRUIHelper constrainView:_ctrlView onBottomOfSuperviewWithGap:25.0];
+    [_ctrlView addConstraint:[NSLayoutConstraint constraintWithItem:self.videoPreview attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:0.0]];
     
-    _ring.clear();
-    
-    UISwipeGestureRecognizer *swipeAway = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipedAway:)];
-    [self.view addGestureRecognizer:swipeAway];
-    
+    [_ctrlView.gaussianSlider addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionNew context:nil];
+    [_ctrlView.thresholdSlider addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -77,6 +106,10 @@ using namespace std;
 
     _ring.clear();
     
+    if (_ctrlView != nil) {
+        [_ctrlView.gaussianSlider removeObserver:self forKeyPath:@"value"];
+        [_ctrlView.thresholdSlider removeObserver:self forKeyPath:@"value"];
+    }
 }
 
 
@@ -96,23 +129,34 @@ using namespace std;
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - key value
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+{
+    if (![keyPath isEqualToString:@"value"]) {
+        return;
+    }
+    
+    if (object == _ctrlView.gaussianSlider) {
+        id newValue = [change objectForKey:NSKeyValueChangeNewKey];
+        self.gaussianBlurDimension = [(NSNumber *)newValue intValue];
+    }
+    
+    if (object == _ctrlView.thresholdSlider) {
+        id newValue = [change objectForKey:NSKeyValueChangeNewKey];
+        self.binaryThreshold = [(NSNumber *)newValue intValue];
+    }
+}
+
 #pragma mark - Protocol CvVideoCameraDelegate
 
 #ifdef __cplusplus
 - (void)processImage:(Mat&)image;
 {
-
-//    // convert to grayscale
-//    Mat gray; cvtColor(image, gray, CV_BGRA2GRAY);
-//
-//    // copy back to image
-//    cvtColor(gray, image, CV_GRAY2BGRA);
-    
     
     // convert to grayscale and blur
     Mat gray;
     cvtColor(image, gray, CV_BGRA2GRAY);
-    GaussianBlur(gray, gray, cv::Size(21, 21), 0);
+    GaussianBlur(gray, gray, cv::Size(_gaussianBlurDimension, _gaussianBlurDimension), 0);
     
 
     if (_ring.size() >= 10) {
@@ -130,24 +174,32 @@ using namespace std;
         Mat frameDelta;
         cv::absdiff(gray, avgImg, frameDelta);
         
+        // Apply threshold
         Mat thresh;
-        cv::threshold(frameDelta, thresh, 25, 255, THRESH_BINARY);
+        cv::threshold(frameDelta, thresh, _binaryThreshold, 255, THRESH_BINARY);
         
+        // Find all contours
+        std::vector<std::vector<cv::Point> > contours;
+        cv::findContours(thresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
         
-        //This part is just to display motions (delete for production)
-        // dilate the thresholded image to fill in holes, then find contours on thresholded image
-        cv::dilate(thresh, thresh, cv::getStructuringElement(MORPH_RECT, cv::Size()));
+        // Count all motion areas
+        std::vector<std::vector<cv::Point> > intruders;
+        double motionValue = 0;
+        for (int i = 0; i < contours.size(); i++) {
+            double area = cv::contourArea(contours[i]);
+            //NSLog(@"Area %d = %f",i, area);
+            if (area > 5){
+                intruders.push_back(contours[i]);
+                motionValue += area;
+            }
+        }
         
-        thresh = cv2.dilate(thresh, None, iterations=2)
-        (cnts, _) = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
-                                     cv2.CHAIN_APPROX_SIMPLE)
-        
-        
-        
-        cv::BackgroundSubtractorMOG2
+        [self.motionMeasure setText:[NSString stringWithFormat:@"motionValue: %.2f", motionValue]];
         
         avgImg.release();
-
+        frameDelta.release();
+        thresh.release();
+        
     }
     
     // add grayscale version to ringbuffer

@@ -33,6 +33,9 @@
 		10225A451E78E000008D3AD0 /* NSXTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 10225A431E78E000008D3AD0 /* NSXTimer.m */; };
 		10F955CE1FD8BCBD00C665CE /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10F955CD1FD8BCBD00C665CE /* opencv2.framework */; };
 		10F955D01FD8BD5E00C665CE /* libnanostreamAVC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 10F955CF1FD8BD5E00C665CE /* libnanostreamAVC.a */; };
+		7EF8502D1FDC9AF200B834F4 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EF8502C1FDC9AF200B834F4 /* opencv2.framework */; };
+		7EFE622C1FDCBF4800D3FCF1 /* BLRTestControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EFE622B1FDCBF4800D3FCF1 /* BLRTestControlView.m */; };
+		7EFE622E1FDCBF5600D3FCF1 /* BLRTestControlView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7EFE622D1FDCBF5600D3FCF1 /* BLRTestControlView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +78,10 @@
 		10225A431E78E000008D3AD0 /* NSXTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSXTimer.m; sourceTree = "<group>"; };
 		10F955CD1FD8BCBD00C665CE /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		10F955CF1FD8BD5E00C665CE /* libnanostreamAVC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libnanostreamAVC.a; sourceTree = "<group>"; };
+		7EF8502C1FDC9AF200B834F4 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		7EFE622A1FDCBF4800D3FCF1 /* BLRTestControlView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BLRTestControlView.h; sourceTree = "<group>"; };
+		7EFE622B1FDCBF4800D3FCF1 /* BLRTestControlView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BLRTestControlView.m; sourceTree = "<group>"; };
+		7EFE622D1FDCBF5600D3FCF1 /* BLRTestControlView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BLRTestControlView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7EF8502D1FDC9AF200B834F4 /* opencv2.framework in Frameworks */,
 				10225A3F1E78DB7D008D3AD0 /* SystemConfiguration.framework in Frameworks */,
 				10225A3D1E78DB32008D3AD0 /* VideoToolbox.framework in Frameworks */,
 				10225A3B1E78DB22008D3AD0 /* AudioToolbox.framework in Frameworks */,
@@ -130,6 +138,9 @@
 				102259E61E787803008D3AD0 /* ViewController.m */,
 				10225A231E789988008D3AD0 /* BLRTestBroadcastViewController.h */,
 				10225A241E789988008D3AD0 /* BLRTestBroadcastViewController.mm */,
+				7EFE622A1FDCBF4800D3FCF1 /* BLRTestControlView.h */,
+				7EFE622B1FDCBF4800D3FCF1 /* BLRTestControlView.m */,
+				7EFE622D1FDCBF5600D3FCF1 /* BLRTestControlView.xib */,
 				10225A251E789988008D3AD0 /* BLRUIHelper.h */,
 				10225A261E789988008D3AD0 /* BLRUIHelper.m */,
 				10F955CF1FD8BD5E00C665CE /* libnanostreamAVC.a */,
@@ -163,6 +174,7 @@
 			isa = PBXGroup;
 			children = (
 				10F955CD1FD8BCBD00C665CE /* opencv2.framework */,
+				7EF8502C1FDC9AF200B834F4 /* opencv2.framework */,
 				10225A3E1E78DB7D008D3AD0 /* SystemConfiguration.framework */,
 				10225A3C1E78DB32008D3AD0 /* VideoToolbox.framework */,
 				10225A3A1E78DB22008D3AD0 /* AudioToolbox.framework */,
@@ -243,6 +255,7 @@
 				102259EF1E787803008D3AD0 /* LaunchScreen.storyboard in Resources */,
 				102259EC1E787803008D3AD0 /* Assets.xcassets in Resources */,
 				102259EA1E787803008D3AD0 /* Main.storyboard in Resources */,
+				7EFE622E1FDCBF5600D3FCF1 /* BLRTestControlView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +269,7 @@
 				102259E71E787803008D3AD0 /* ViewController.m in Sources */,
 				102259E41E787803008D3AD0 /* AppDelegate.m in Sources */,
 				10225A271E789988008D3AD0 /* BLRTestBroadcastViewController.mm in Sources */,
+				7EFE622C1FDCBF4800D3FCF1 /* BLRTestControlView.m in Sources */,
 				102259E11E787803008D3AD0 /* main.m in Sources */,
 				10225A441E78E000008D3AD0 /* NSXCustomCaptureSession.m in Sources */,
 				10225A281E789988008D3AD0 /* BLRUIHelper.m in Sources */,

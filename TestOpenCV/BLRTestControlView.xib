@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="BLRTestControlView">
+            <rect key="frame" x="0.0" y="0.0" width="396" height="180"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Gaussian Blur" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jqd-HQ-nAr">
+                    <rect key="frame" x="141" y="10" width="115" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="10" minValue="0.0" maxValue="20" translatesAutoresizingMaskIntoConstraints="NO" id="LDA-xS-xSr">
+                    <rect key="frame" x="18" y="39" width="360" height="30"/>
+                    <connections>
+                        <action selector="sliderChange:" destination="iN0-l3-epB" eventType="valueChanged" id="e80-U5-cea"/>
+                    </connections>
+                </slider>
+                <textField opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Threshold:" borderStyle="roundedRect" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pij-5v-W1a">
+                    <rect key="frame" x="150" y="103" width="97" height="30"/>
+                    <nil key="textColor"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                    <connections>
+                        <outlet property="delegate" destination="iN0-l3-epB" id="m7X-GQ-FFs"/>
+                    </connections>
+                </textField>
+                <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="25" minValue="1" maxValue="50" translatesAutoresizingMaskIntoConstraints="NO" id="XHu-ei-0EX">
+                    <rect key="frame" x="18" y="131" width="360" height="30"/>
+                    <connections>
+                        <action selector="sliderChange:" destination="iN0-l3-epB" eventType="valueChanged" id="gXE-4k-kJs"/>
+                    </connections>
+                </slider>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="LDA-xS-xSr" firstAttribute="top" secondItem="Jqd-HQ-nAr" secondAttribute="bottom" constant="8" id="EL4-9K-rZf"/>
+                <constraint firstItem="XHu-ei-0EX" firstAttribute="top" secondItem="pij-5v-W1a" secondAttribute="bottom" constant="2" id="LGA-1w-X5M"/>
+                <constraint firstItem="LDA-xS-xSr" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="gPV-69-598"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="LDA-xS-xSr" secondAttribute="trailing" constant="20" id="sdF-n8-XdT"/>
+                <constraint firstItem="XHu-ei-0EX" firstAttribute="leading" secondItem="LDA-xS-xSr" secondAttribute="leading" id="x2e-O0-A3s"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="gaussianBlur" destination="Jqd-HQ-nAr" id="tiE-R4-S8h"/>
+                <outlet property="gaussianSlider" destination="LDA-xS-xSr" id="3rm-yV-mSk"/>
+                <outlet property="threshold" destination="pij-5v-W1a" id="7BQ-5j-GL8"/>
+                <outlet property="thresholdSlider" destination="XHu-ei-0EX" id="8jL-sp-atg"/>
+            </connections>
+            <point key="canvasLocation" x="22" y="-15"/>
+        </view>
+    </objects>
+</document>
