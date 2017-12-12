@@ -9,57 +9,85 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BLRTestControlView">
+            <connections>
+                <outlet property="accumulateAlpha" destination="wFR-oH-0io" id="Hw9-hJ-Oge"/>
+                <outlet property="alphaSlider" destination="IAS-AP-Mhh" id="PHA-ax-1ig"/>
+                <outlet property="gaussianBlur" destination="Jqd-HQ-nAr" id="cNA-H9-7sp"/>
+                <outlet property="gaussianSlider" destination="LDA-xS-xSr" id="yTS-TR-eTt"/>
+                <outlet property="threshold" destination="pij-5v-W1a" id="iqf-2a-F0a"/>
+                <outlet property="thresholdSlider" destination="XHu-ei-0EX" id="LTA-3L-ky3"/>
+            </connections>
+        </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="BLRTestControlView">
-            <rect key="frame" x="0.0" y="0.0" width="396" height="180"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="396" height="284"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Gaussian Blur" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jqd-HQ-nAr">
-                    <rect key="frame" x="141" y="10" width="115" height="21"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gaussian Blur" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jqd-HQ-nAr">
+                    <rect key="frame" x="146" y="10" width="105" height="21"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="10" minValue="0.0" maxValue="20" translatesAutoresizingMaskIntoConstraints="NO" id="LDA-xS-xSr">
-                    <rect key="frame" x="18" y="39" width="360" height="30"/>
+                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="10" minValue="0.0" maxValue="20" translatesAutoresizingMaskIntoConstraints="NO" id="LDA-xS-xSr">
+                    <rect key="frame" x="18" y="39" width="360" height="31"/>
                     <connections>
-                        <action selector="sliderChange:" destination="iN0-l3-epB" eventType="valueChanged" id="e80-U5-cea"/>
+                        <action selector="sliderChange:" destination="-1" eventType="valueChanged" id="p8m-qG-Wn3"/>
                     </connections>
                 </slider>
-                <textField opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Threshold:" borderStyle="roundedRect" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pij-5v-W1a">
-                    <rect key="frame" x="150" y="103" width="97" height="30"/>
+                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Threshold:" borderStyle="roundedRect" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pij-5v-W1a">
+                    <rect key="frame" x="153" y="102" width="91" height="30"/>
                     <nil key="textColor"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits"/>
                     <connections>
-                        <outlet property="delegate" destination="iN0-l3-epB" id="m7X-GQ-FFs"/>
+                        <outlet property="delegate" destination="-1" id="x4e-bk-zPH"/>
                     </connections>
                 </textField>
-                <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="25" minValue="1" maxValue="50" translatesAutoresizingMaskIntoConstraints="NO" id="XHu-ei-0EX">
-                    <rect key="frame" x="18" y="131" width="360" height="30"/>
+                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="25" minValue="1" maxValue="50" translatesAutoresizingMaskIntoConstraints="NO" id="XHu-ei-0EX">
+                    <rect key="frame" x="18" y="134" width="360" height="31"/>
                     <connections>
-                        <action selector="sliderChange:" destination="iN0-l3-epB" eventType="valueChanged" id="gXE-4k-kJs"/>
+                        <action selector="sliderChange:" destination="-1" eventType="valueChanged" id="EA9-Nf-8Tu"/>
+                    </connections>
+                </slider>
+                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Alpha:" borderStyle="roundedRect" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wFR-oH-0io">
+                    <rect key="frame" x="167.5" y="197" width="62" height="30"/>
+                    <nil key="textColor"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="Pen-4q-RmE"/>
+                    </connections>
+                </textField>
+                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="25" minValue="1" maxValue="50" translatesAutoresizingMaskIntoConstraints="NO" id="IAS-AP-Mhh">
+                    <rect key="frame" x="18" y="229" width="360" height="31"/>
+                    <connections>
+                        <action selector="sliderChange:" destination="-1" eventType="valueChanged" id="v67-38-geD"/>
                     </connections>
                 </slider>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="IAS-AP-Mhh" firstAttribute="trailing" secondItem="XHu-ei-0EX" secondAttribute="trailing" id="Atm-Ge-i74"/>
+                <constraint firstItem="IAS-AP-Mhh" firstAttribute="leading" secondItem="XHu-ei-0EX" secondAttribute="leading" id="CpO-mi-Tyz"/>
                 <constraint firstItem="LDA-xS-xSr" firstAttribute="top" secondItem="Jqd-HQ-nAr" secondAttribute="bottom" constant="8" id="EL4-9K-rZf"/>
+                <constraint firstItem="LDA-xS-xSr" firstAttribute="trailing" secondItem="XHu-ei-0EX" secondAttribute="trailing" id="EZC-S6-8P4"/>
+                <constraint firstItem="wFR-oH-0io" firstAttribute="centerX" secondItem="IAS-AP-Mhh" secondAttribute="centerX" id="FYa-0c-kjV"/>
+                <constraint firstItem="IAS-AP-Mhh" firstAttribute="top" secondItem="wFR-oH-0io" secondAttribute="bottom" constant="2" id="J4X-va-dBn"/>
+                <constraint firstItem="Jqd-HQ-nAr" firstAttribute="centerX" secondItem="LDA-xS-xSr" secondAttribute="centerX" id="JxY-4b-smu"/>
+                <constraint firstItem="XHu-ei-0EX" firstAttribute="top" secondItem="LDA-xS-xSr" secondAttribute="bottom" constant="65" id="KKX-OU-2hS"/>
                 <constraint firstItem="XHu-ei-0EX" firstAttribute="top" secondItem="pij-5v-W1a" secondAttribute="bottom" constant="2" id="LGA-1w-X5M"/>
                 <constraint firstItem="LDA-xS-xSr" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="gPV-69-598"/>
+                <constraint firstItem="IAS-AP-Mhh" firstAttribute="top" secondItem="XHu-ei-0EX" secondAttribute="bottom" constant="65" id="iaS-MY-pef"/>
+                <constraint firstItem="Jqd-HQ-nAr" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="10" id="qcu-kQ-d85"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="LDA-xS-xSr" secondAttribute="trailing" constant="20" id="sdF-n8-XdT"/>
+                <constraint firstItem="pij-5v-W1a" firstAttribute="centerX" secondItem="XHu-ei-0EX" secondAttribute="centerX" id="vrV-nV-cbb"/>
                 <constraint firstItem="XHu-ei-0EX" firstAttribute="leading" secondItem="LDA-xS-xSr" secondAttribute="leading" id="x2e-O0-A3s"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <connections>
-                <outlet property="gaussianBlur" destination="Jqd-HQ-nAr" id="tiE-R4-S8h"/>
-                <outlet property="gaussianSlider" destination="LDA-xS-xSr" id="3rm-yV-mSk"/>
-                <outlet property="threshold" destination="pij-5v-W1a" id="7BQ-5j-GL8"/>
-                <outlet property="thresholdSlider" destination="XHu-ei-0EX" id="8jL-sp-atg"/>
-            </connections>
-            <point key="canvasLocation" x="22" y="-15"/>
+            <point key="canvasLocation" x="22" y="37"/>
         </view>
     </objects>
 </document>
