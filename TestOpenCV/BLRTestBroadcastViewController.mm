@@ -31,6 +31,7 @@ using namespace std;
 
 @property int gaussianBlurDimension;
 @property int binaryThreshold;
+@property double accumulationAlpha;
 
 @end
 
@@ -49,14 +50,15 @@ using namespace std;
     [BLRUIHelper constrainView:self.videoPreview onTopOfSuperviewWithGap:0.0];
     [BLRUIHelper constrainView:self.videoPreview onBottomOfSuperviewWithGap:0.0];
     
-    self.motionMeasure = [[UILabel alloc] initWithFrame:CGRectMake(100, 70, 100, 60)];
-    [self.videoPreview addSubview:self.motionMeasure];
-    
     self.gaussianBlurDimension = kBlurDimensionMin;
     self.binaryThreshold = kThresholdMin;
+    self.accumulationAlpha = (double)kAccAlphaMin;
     
     [self setupCamera];
     [self setupControls];
+    
+    self.motionMeasure = [[UILabel alloc] initWithFrame:CGRectMake(100, 70, 100, 60)];
+    [self.view addSubview:self.motionMeasure];
     
     _ring.clear();
     
@@ -76,16 +78,19 @@ using namespace std;
 }
 
 - (void)setupControls {
-    _ctrlView = [[BLRTestControlView alloc] init];
-    [_ctrlView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [_ctrlView addConstraint:[NSLayoutConstraint constraintWithItem:_ctrlView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:100]];
-    [_ctrlView addConstraint:[NSLayoutConstraint constraintWithItem:_ctrlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:200]];
-    [self.videoPreview addSubview:_ctrlView];
-    [BLRUIHelper constrainView:_ctrlView onBottomOfSuperviewWithGap:25.0];
-    [_ctrlView addConstraint:[NSLayoutConstraint constraintWithItem:self.videoPreview attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:0.0]];
     
-    [_ctrlView.gaussianSlider addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionNew context:nil];
-    [_ctrlView.thresholdSlider addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionNew context:nil];
+    self.ctrlView = [[BLRTestControlView alloc] initWithFrame:CGRectMake(0, 0, 200, 300)];
+//    [_ctrlView setTranslatesAutoresizingMaskIntoConstraints:NO];
+//    [_ctrlView addConstraint:[NSLayoutConstraint constraintWithItem:_ctrlView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:260.0]];
+//    [_ctrlView addConstraint:[NSLayoutConstraint constraintWithItem:_ctrlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:200.0]];
+    [self.view addSubview:self.ctrlView];
+//    [BLRUIHelper constrainView:_ctrlView onBottomOfSuperviewWithGap:-10.0];
+//    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_ctrlView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1 constant:0.0]];
+    
+    [self.ctrlView setBackgroundColor:[UIColor greenColor]];
+    
+    [self.ctrlView.gaussianSlider addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionNew context:nil];
+    [self.ctrlView.thresholdSlider addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -158,6 +163,7 @@ using namespace std;
     cvtColor(image, gray, CV_BGRA2GRAY);
     GaussianBlur(gray, gray, cv::Size(_gaussianBlurDimension, _gaussianBlurDimension), 0);
     
+    image = gray;
 
     if (_ring.size() >= 10) {
 
@@ -165,40 +171,41 @@ using namespace std;
         CGFloat rows = gray.rows;
         
         // calculate a moving average
-        Mat avgImg(rows, cols, CV_32FC(gray.channels()));
+        Mat avgImg(rows, cols, CV_32FC1);
         for (int i =0; i<10; i++) {
-            cv::accumulate(_ring[i], avgImg);
+            cv::accumulateWeighted(_ring[i], avgImg, _accumulationAlpha);
         }
         
-        // compute the absolute difference between the current frame and the moving average
-        Mat frameDelta;
-        cv::absdiff(gray, avgImg, frameDelta);
         
-        // Apply threshold
-        Mat thresh;
-        cv::threshold(frameDelta, thresh, _binaryThreshold, 255, THRESH_BINARY);
-        
-        // Find all contours
-        std::vector<std::vector<cv::Point> > contours;
-        cv::findContours(thresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-        
-        // Count all motion areas
-        std::vector<std::vector<cv::Point> > intruders;
-        double motionValue = 0;
-        for (int i = 0; i < contours.size(); i++) {
-            double area = cv::contourArea(contours[i]);
-            //NSLog(@"Area %d = %f",i, area);
-            if (area > 5){
-                intruders.push_back(contours[i]);
-                motionValue += area;
-            }
-        }
-        
-        [self.motionMeasure setText:[NSString stringWithFormat:@"motionValue: %.2f", motionValue]];
-        
-        avgImg.release();
-        frameDelta.release();
-        thresh.release();
+//        // compute the absolute difference between the current frame and the moving average
+//        Mat frameDelta(rows, cols, CV_32FC1);
+//        cv::absdiff(gray, avgImg, frameDelta);
+//
+//        // Apply threshold
+//        Mat thresh;
+//        cv::threshold(frameDelta, thresh, _binaryThreshold, 255, THRESH_BINARY);
+//
+//        // Find all contours
+//        std::vector<std::vector<cv::Point> > contours;
+//        cv::findContours(thresh, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+//
+//        // Count all motion areas
+//        std::vector<std::vector<cv::Point> > motionAreas;
+//        double motionValue = 0;
+//        for (int i = 0; i < contours.size(); i++) {
+//            double area = cv::contourArea(contours[i]);
+//            //only count motion above a certain size (filter some artifacts)
+//            if (area > 5){
+//                motionAreas.push_back(contours[i]);
+//                motionValue += area;
+//            }
+//        }
+//
+//        [self.motionMeasure setText:[NSString stringWithFormat:@"motionValue: %.2f", motionValue]];
+//
+//        avgImg.release();
+//        frameDelta.release();
+//        thresh.release();
         
     }
     
@@ -210,6 +217,11 @@ using namespace std;
         temp.release();
         _ring.pop_front();
     }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.view bringSubviewToFront:self.motionMeasure];
+        [self.view bringSubviewToFront:self.ctrlView.inputView];
+    });
     
     
 }

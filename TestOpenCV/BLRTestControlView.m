@@ -10,65 +10,100 @@
 
 @implementation BLRTestControlView
 
-- (BLRTestControlView *)init {
-    BLRTestControlView *result = nil;
-    NSArray* elements = [[NSBundle mainBundle] loadNibNamed: NSStringFromClass([self class]) owner:self options: nil];
-    for (id anObject in elements)
-    {
-        if ([anObject isKindOfClass:[self class]])
-        {
-            result = anObject;
-            break;
-        }
-    }
+- (void)commonSetup {
+    [self addSubview:self.inputView];
     
-    [result.gaussianSlider setContinuous:NO];
-    [result.thresholdSlider setContinuous:NO];
-    [result.thresholdSlider setMaximumValue:kThresholdMax];
-    [result.thresholdSlider setMinimumValue:kThresholdMin];
-    [result.gaussianSlider setMaximumValue:kBlurDimensionMax];
-    [result.gaussianSlider setMinimumValue:kBlurDimensionMin];
+    [self.gaussianSlider setContinuous:NO];
+    [self.thresholdSlider setContinuous:NO];
+    [self.alphaSlider setContinuous:NO];
+    [self.thresholdSlider setMaximumValue:kThresholdMax];
+    [self.thresholdSlider setMinimumValue:kThresholdMin];
+    [self.gaussianSlider setMaximumValue:kBlurDimensionMax];
+    [self.gaussianSlider setMinimumValue:kBlurDimensionMin];
+    [self.alphaSlider setMaximumValue:logf(kAccAlphaMax)];
+    [self.alphaSlider setMinimumValue:logf(kAccAlphaMin)];
     
+    [self.accumulateAlpha setDelegate:self];
+    [self.threshold setDelegate:self];
     
-    return result;
 }
+
+- (id)initWithFrame:(CGRect)frame {
+    
+    if ((self = [super initWithFrame:frame])) {
+        self = [[[NSBundle mainBundle] loadNibNamed:NSStringFromClass([self class]) owner:self options:nil] lastObject];
+        [self commonSetup];
+    }
+    return self;
+}
+
+
 
 #pragma mark - UISliderDelegate
 
 - (IBAction)sliderChange:(id)sender {
-    int discreteValue = roundl([(UISlider *)sender value]);
-    [(UISlider *)sender setValue:(float)discreteValue];
+    
     
     if (sender == self.gaussianSlider) {
+        int discreteValue = roundl([(UISlider *)sender value]);
+        [(UISlider *)sender setValue:(float)discreteValue];
+        
         [self.gaussianBlur setText:[NSString stringWithFormat:@"Gaussian Blur: %d", discreteValue]];
     }
     
     if (sender == self.thresholdSlider) {
+        int discreteValue = roundl([(UISlider *)sender value]);
+        [(UISlider *)sender setValue:(float)discreteValue];
+        
         [self.threshold setText:[NSString stringWithFormat:@"Threshold: %d", discreteValue]];
+    }
+    
+    if (sender == self.alphaSlider) {
+        float logValue = powf(10.0, self.alphaSlider.value);
+        
+        [self.accumulateAlpha setText:[NSString stringWithFormat:@"Alpha: %.2f", logValue]];
     }
 }
 
 #pragma mark - UITextFieldDelegate
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if (textField != self.threshold) {
-        return YES;
+    if (textField == self.threshold) {
+        int thres = textField.text.intValue;
+        
+        if (thres > kThresholdMax || thres < kThresholdMin) {
+            return NO;
+        }
     }
     
-    int thres = textField.text.intValue;
-    
-    if (thres > kThresholdMax || thres < kThresholdMin) {
-        return NO;
+    if (textField == self.accumulateAlpha) {
+        float alphaValue = textField.text.floatValue;
+        
+        if (alphaValue > kAccAlphaMax || alphaValue < kAccAlphaMin) {
+            return NO;
+        }
     }
     
     return YES;
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
-    int thres = textField.text.intValue;
     
-    if (thres <= kThresholdMax && thres >= kThresholdMin) {
-        [self.thresholdSlider setValue:(float)thres];
+    if (textField == self.threshold) {
+        int thres = textField.text.intValue;
+        
+        if (thres <= kThresholdMax && thres >= kThresholdMin) {
+            [self.thresholdSlider setValue:(float)thres];
+        }
+    }
+    
+    if (textField == self.accumulateAlpha) {
+        float alphaValue = textField.text.floatValue;
+        
+        if (alphaValue <= kAccAlphaMax || alphaValue >= kAccAlphaMin) {
+            
+            [self.alphaSlider setValue:logf(alphaValue)];
+        }
     }
 }
 
